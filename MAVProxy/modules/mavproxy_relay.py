@@ -63,18 +63,37 @@ class RelayModule(mp_module.MPModule):
 
     def cmd_motortest(self, args):
         '''run motortests on copter'''
-        if len(args) < 4:
+        type = 0
+        value = 2
+        timeout = 2
+        count = 0
+        if len(args) < 1:
             print("Usage: motortest motornum type(0=percent, 1=PWM, 2=RC-passthru) value timeout(s) <count>")
             return
         if len(args) == 5:
             count = int(args[4])
+        if len(args) > 3:
+            timeout = int(args[3])
+        if len(args) > 2:
+            value = int(args[2])
+        if len(args) > 1:
+            type = int(args[1])
+        motornum = args[0]
+        dash = motornum.find('-')
+        if dash > 0:
+            startmotor = int(motornum[0:dash])
+            endmotor = int(motornum[dash+1])
         else:
-            count = 0
-        self.master.mav.command_long_send(self.target_system,
-                                          0,
-                                          mavutil.mavlink.MAV_CMD_DO_MOTOR_TEST, 0,
-                                          int(args[0]), int(args[1]), float(args[2]), int(args[3]), count,
-                                          0, 0)
+            startmotor = int(motornum)
+            endmotor = int(motornum)
+
+        for motor in range(startmotor, endmotor + 1):
+            self.master.mav.command_long_send(self.target_system,
+                                              0,
+                                              mavutil.mavlink.MAV_CMD_DO_MOTOR_TEST, 0,
+                                              motor, type, value, timeout, count,
+                                              0, 0)
+            time.sleep(0.1)
 
 
 def init(mpstate):
