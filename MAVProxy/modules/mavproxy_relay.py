@@ -68,7 +68,7 @@ class RelayModule(mp_module.MPModule):
         timeout = 2
         count = 0
         if len(args) < 1:
-            print("Usage: motortest motornum type(0=percent, 1=PWM, 2=RC-passthru) value timeout(s) <count>")
+            print("Usage: motortest motornum <type(0=percent, 1=PWM, 2=RC-passthru)> <value> <timeout(s)> <count>")
             return
         if len(args) == 5:
             count = int(args[4])
